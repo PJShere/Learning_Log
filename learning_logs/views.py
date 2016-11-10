@@ -57,6 +57,7 @@ def new_topic(request):
 @login_required
 def new_entry(request, topic_id):
     """Add a new entry for a particular topic."""
+    # topic = get_object_or_404(Topic, id=topic_id)
     topic = Topic.objects.get(id=topic_id)
 
     if request.method != 'POST':
@@ -64,7 +65,7 @@ def new_entry(request, topic_id):
         if check_topic_owner(request, topic_id):
             form = EntryForm()
         else:
-            return Http404
+            raise Http404
     else:
         # POST data submitted; process data.
         form = EntryForm(data=request.POST)
@@ -76,7 +77,7 @@ def new_entry(request, topic_id):
                 return HttpResponseRedirect(reverse('learning_logs:topic',
                                                     args=[topic_id]))
             else:
-                return Http404
+                raise Http404
 
     context = {'topic': topic, 'form': form}
     return render(request, 'learning_logs/new_entry.html', context)
@@ -85,7 +86,8 @@ def new_entry(request, topic_id):
 @login_required
 def edit_entry(request, entry_id):
     """Edit an existing entry."""
-    entry = Entry.objects.get(id=entry_id)
+    entry = get_object_or_404(Entry, id=entry_setid)
+    #topic = get_object_or_404(Topic, id=entry.topic.id)
     topic = entry.topic
     topic_id = entry.topic.id
 
@@ -104,7 +106,7 @@ def edit_entry(request, entry_id):
                 return HttpResponseRedirect(reverse('learning_logs:topic',
                                                     args=[topic.id]))
             else:
-                return Http404
+                raise Http404
 
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)
