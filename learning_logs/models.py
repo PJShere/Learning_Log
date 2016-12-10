@@ -25,3 +25,25 @@ class Entry(models.Model):
     def __str__(self):
         """Return a string representation of the model."""
         return self.text[:50] + "..."
+
+
+class Booklist(models.Model):
+    """A list of Books."""
+    booklist_title = models.CharField(max_length=200)
+    date_added = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User)
+
+    def __str__(self):
+        """Return a string representation of the model."""
+        return self.booklist_title
+
+
+class Book(models.Model):
+    """books that belong to a list."""
+    booklist = models.ForeignKey(Booklist)
+    book_title = models.CharField(max_length=300)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a string representation of the model."""
+        return self.book_title

@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '59)vc$z$kt%l^k=k&ll5=)*$onxl9&&lf#7h^s9@q#o&dj+gt1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost']
 
@@ -123,6 +123,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'learning_log/static/learning_log/'),)
 
 # My settings
 LOGIN_URL = '/users/login/'
@@ -135,7 +137,7 @@ BOOTSTRAP3 = {
 if os.getcwd() == '/app':
     import dj_database_url
     DATABASES = {
-            'default': dj_database_url.config(default='postgres://localhost')
+        'default': dj_database_url.config(default='postgres://localhost')
     }
 
     # Honor the 'X-Forwarded-Proto' header for request.is_secure().
@@ -151,4 +153,4 @@ if os.getcwd() == '/app':
     STATIC_ROOT = 'staticfiles'
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'static'),
-        )
+    )

@@ -1,0 +1,24 @@
+
+{% extends "learning_logs/base.html" %}
+
+{% block header %}
+  <h1>Booklists</h1>
+{% endblock header %}
+
+{% block content %}
+  
+  <ul>
+    {% for books in booklists %}
+      <li>
+        <h3>
+          <a href="{% url 'learning_logs:books' books.id %}">{{ books }}</a>
+        </h3>
+      </li>
+        {% empty %}
+          <li>No Booklists have been added yet.</li>
+    {% endfor %}
+  </ul>
+
+  <h3><a href="{% url 'learning_logs:new_booklist' %}">Add new booklist</a></h3>
+
+{% endblock content %}

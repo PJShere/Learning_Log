@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import Topic, Entry
-from .forms import TopicForm, EntryForm
+from .models import Topic, Entry, Booklist, Book
+from .forms import TopicForm, EntryForm, BooklistForm
 
 # Create your views here.
 
@@ -86,7 +86,7 @@ def new_entry(request, topic_id):
 @login_required
 def edit_entry(request, entry_id):
     """Edit an existing entry."""
-    entry = get_object_or_404(Entry, id=entry_setid)
+    entry = get_object_or_404(Entry, id=entry_id)
     #topic = get_object_or_404(Topic, id=entry.topic.id)
     topic = entry.topic
     topic_id = entry.topic.id
@@ -119,3 +119,48 @@ def check_topic_owner(request, topic_id):
         return True
     else:
         return False
+
+
+def search(request):
+    """Show search results."""
+    if request.method != 'GET':
+        raise Http404
+    else:
+        q = request.GET.get('searchquery', '')
+        # api_url = 'http://openlibrary.org/search.json?title=' + q
+        context = {'query': q}
+        return render(request, 'learning_logs/search.html', context)
+
+
+@login_required
+def booklists(request):
+    """Show all booklists"""
+    booklists = Booklist.objects.filter(
+        owner=request.user).order_by('date_added')
+    context = {'booklists': booklists}
+    return render(request, 'learning_logs/booklists.html', context)
+
+
+@login_required
+def books(request, booklist_id):
+    """Show books for the given Booklist."""
+    return render(request, 'learning_logs/index.html')
+
+
+@login_required
+def new_booklist(request):
+    """Add a new booklist."""
+    if request.method != 'POST':
+        # No data submitted; create a blank form.
+        form = BooklistForm()
+    else:
+        # POST data submitted; process data.
+        form = BooklistForm(request.POST)
+        if form.is_valid():
+            new_booklist = form.save(commit=False)
+            new_booklist.owner = request.user
+            new_booklist.save()
+            return HttpResponseRedirect(reverse('learning_logs:booklists'))
+
+    context = {'form': form}
+    return render(request, 'learning_logs/new_booklist.html', context)
